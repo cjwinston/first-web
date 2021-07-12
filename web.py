@@ -17,7 +17,6 @@ class User(db.Model):
     return f"User('{self.username}', '{self.email}')"
 
 @app.route("/")                          # this tells you the URL the method below is related to
-@app.route("/home")
 def home():
     return render_template('home.html', subtitle='Home Page', text='This is the home page')
 
@@ -25,9 +24,6 @@ def home():
 def about():
     return render_template('about.html', subtitle='About Page', text='This is the about page')
 
-@app.route("/second_page")
-def second_page():
-    return render_template('second_page.html', subtitle='Second Page', text='This is the second page')
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
