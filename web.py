@@ -45,7 +45,7 @@ def register():
 
 @app.route("/captions")
 def captions():
-    TITLE = "Tyler, The Creator Worked at Starbucks"
+    TITLE = "SEE YOU AGAIN ft. Kali Uchis"
     return render_template('captions.html', songName=TITLE, file=FILE_NAME)
 
 @app.before_first_request
