@@ -36,5 +36,11 @@ def register():
         return redirect(url_for('home')) # if so - send to home page
     return render_template('register.html', title='Register', form=form)
 
+@app.route("/captions")
+def captions():
+    TITLE = "Tyler, The Creator - I THOUGHT YOU WANTED TO DANCE (ft. Fana Hues)"
+    FILE_NAME = "TTC.wav"
+    return render_template('captions.html', songName=TITLE, file=FILE_NAME)
+
 if __name__ == '__main__':               # this should always be at the end
     app.run(debug=True, host="0.0.0.0")
