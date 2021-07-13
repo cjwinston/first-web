@@ -6,4 +6,7 @@
     <source src="{{url_for('static', filename=file) }}">
 </audio>
 <p>{{ file }}</p>
+
+{% include "captionsPane.html" %}
+
 {% endblock content %}
