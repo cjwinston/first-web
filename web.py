@@ -51,9 +51,14 @@ def captions():
 @app.before_first_request
 def before_first_request():
     #resetting time stamp file to 0
-    file = open("pos.txt","w") 
-    file.write(str(0))
-    file.close()
+    try:
+        file = open("pos.txt","w")
+    except fileOpenException:
+        print("pos.txt could no be opened")
+    else:
+        file.write(str(0))
+    finally:
+        file.close()
 
     #starting thread that will time updates
     threading.Thread(target=update_captions, daemon=True).start()
@@ -61,14 +66,23 @@ def before_first_request():
 @app.context_processor
 def inject_load():
     # getting previous time stamp
-    file = open("pos.txt","r")
-    pos = int(file.read())
-    file.close()
-
+    try:
+        file = open("pos.txt","r")
+    except fileOpenException:
+        print("pos.txt could no be opened")
+    else:
+        pos = int(file.read())
+    finally:
+        file.close()
     # writing next time stamp
-    file = open("pos.txt","w")
-    file.write(str(pos+interval))
-    file.close()
+    try:
+        file = open("pos.txt","w")
+    except fileOpenException:
+        print("pos.txt could no be opened")
+    else:
+        file.write(str(pos+interval))
+    finally:
+        file.close()
 
     #returning captions
     return {'caption':printWAV(FILE_NAME, pos=pos, clip=interval)}
