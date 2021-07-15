@@ -22,6 +22,7 @@ jobs:
           pip3 install SpeechRecognition
           pip3 install turbo-flask
           pip3 install flask-login
+          pip3 install flask-behind-proxy
 
       - name: Test webpages
         run: |
