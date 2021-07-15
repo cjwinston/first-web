@@ -1,11 +1,14 @@
-from flask import Flask, render_template, url_for, flash, redirect
+from flask import Flask, render_template, url_for, flash, redirect, session, g, after_this_request, request
 from forms import RegistrationForm
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import exc
 from audio import printWAV
 import time, random, threading
 from turbo_flask import Turbo
+from flask_behind_proxy import FlaskBehindProxy
 
 app = Flask(__name__)                    # this gets the name of the file so Flask knows it's name
+proxied = FlaskBehindProxy(app)
 app.config['SECRET_KEY'] = 'c3eec5c8ffb8f4c3b45f24e2b11bf875'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
@@ -19,7 +22,7 @@ class User(db.Model):
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"
 
-interval=10
+interval=20
 FILE_NAME = "TTC.wav"
 turbo = Turbo(app)
 
@@ -37,15 +40,18 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit(): # checks if entries are valid
         user = User(username=form.username.data, email=form.email.data, password=form.password.data)
-        db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except exc.IntegrityError:
+            db.session.rollback()
         flash(f'Account created for {form.username.data}!', 'success')
-        return redirect(url_for('home')) # if so - send to home page
+        return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
 
 @app.route("/captions")
 def captions():
-    TITLE = "SEE YOU AGAIN ft. Kali Uchis"
+    TITLE = "HOW SCHOOL MAKES KIDS LESS INTELLIGENT | EDDY ZHONG"
     return render_template('captions.html', songName=TITLE, file=FILE_NAME)
 
 @app.before_first_request
@@ -92,9 +98,8 @@ def update_captions():
         while True:
             # timing thread waiting for the interval
             time.sleep(interval)
-
             # forcefully updating captionsPane with caption
             turbo.push(turbo.replace(render_template('captionsPane.html'), 'load'))
 
 if __name__ == '__main__':               # this should always be at the end
-    app.run(debug=True, host="0.0.0.0")
+    app.run(debug=True, host="0.0.0.0", use_reloader=False)
