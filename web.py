@@ -11,6 +11,7 @@ app = Flask(__name__)                    # this gets the name of the file so Fla
 proxied = FlaskBehindProxy(app)
 app.config['SECRET_KEY'] = 'c3eec5c8ffb8f4c3b45f24e2b11bf875'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
 class User(db.Model):
