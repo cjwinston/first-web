@@ -1,2 +1,2 @@
 web: gunicorn
-cam-web: app
+web: app
